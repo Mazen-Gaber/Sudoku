@@ -3,6 +3,7 @@ import sys
 from gui_widgets import *
 from gui_utils import *
 from sudoku_utils import *
+from sudoku_solver import *
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -93,7 +94,7 @@ def generate_user_board(): # Interactive board
                 selected_cell = get_selected_cell(mouse_x, mouse_y)
 
                 if selected_cell is not None:
-                    board[selected_cell[0]][selected_cell[1]] = (board[selected_cell[0]][selected_cell[1]] + 1) % 9
+                    board[selected_cell[0]][selected_cell[1]] = (board[selected_cell[0]][selected_cell[1]] + 1) % 10
                     
                 if begin_solving_button_rect.collidepoint(event.pos):
                     begin = True
@@ -172,8 +173,10 @@ def main():
         board = generate_sudoku_board()
     elif interactive_mode:
         board = generate_user_board()
-        if backtrack(board):
+        solution = solver(board)
+        if solution:
             print("Puzzle is SOLVABLE!")
+            draw
         else:
             print("Puzzle is NOT SOLVABLE!")
         print(board)

@@ -56,7 +56,7 @@ def main():
         draw_start_page()
         clock.tick(60)
 
-    # draw_game_page()
+    game_page()
 
 if __name__ == "__main__":
     main()
