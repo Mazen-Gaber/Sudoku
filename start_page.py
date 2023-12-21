@@ -38,7 +38,10 @@ def draw_start_page():
 def game_page():
     pygame.quit()  # Close the Pygame window
     # FOR LINUX USERS (HASSAN) CHANGE python WITH python3
-    subprocess.call(["python", "game_page.py"])
+    if sys.platform == "linux":
+        subprocess.call(["python3", "game_page.py"])
+    else:
+        subprocess.call(["python", "game_page.py"])
     sys.exit()  # Exit the current Python script
 
 def main():
@@ -57,6 +60,6 @@ def main():
         clock.tick(60)
 
     game_page()
-
+    # draw_game_page()
 if __name__ == "__main__":
     main()

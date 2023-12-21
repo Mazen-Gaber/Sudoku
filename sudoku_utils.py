@@ -1,5 +1,5 @@
-def backtracking(csp):
-    return backtrack({}, csp)
+def backtracking(csp,assignment = {}):
+    return backtrack(assignment, csp)
 
 def backtrack(assignment, csp):
     if is_complete(assignment, csp):
@@ -13,7 +13,7 @@ def backtrack(assignment, csp):
             assignment[var] = value
             if csp.domain:
                 forward_check(csp, var, value, assignment)
-                
+
             result = backtrack(assignment, csp)
             if result:
                 return result
@@ -66,3 +66,57 @@ def forward_check(csp, var, value, assignment):
                 csp.domain[neighbour].remove(value)
                 csp.pruned[var].append((neighbour, value))
 
+
+def check_initial_assignment(assignment, csp):
+    for var, value in assignment.items():
+        if not is_consistent(var, value, assignment, csp):
+            return False
+    return True
+
+
+class CSP:
+    def __init__(self):
+        self.cells = ['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4','D1','D2','D3','D4']  # List of variables
+
+        self.domain = {}
+        for cell in self.cells:
+            self.domain[cell] = [1,2,3,4,5,6,7,8,9]
+
+        # Neighbors for each variable
+        self.neighbours = {
+            'A1': ['A2', 'A3', 'A4', 'B1', 'B2','C1','C3'],
+            'A2': ['A1', 'A3', 'A4','B1', 'B2','C2','C4'],
+            'A3': ['A1', 'A2', 'A4','B3', 'B4','C1','C3'],
+            'A4': ['A1', 'A2', 'A3','B3', 'B4','C2','C4'],
+            'B1': ['A1', 'A2', 'B2','B3','B4','D1','D3'],
+            'B2': ['A1', 'A2', 'B1','B3','B4','D2','D4'],
+            'B3': ['A3', 'A4', 'B1','B2','B4','D1','D3'],
+            'B4': ['A3', 'A4', 'B1','B2','B3','D2','D4'],
+            'C1': ['A1', 'A3', 'C2','C3','C4','D1','D2'],
+            'C2': ['A2', 'A4', 'C1','C3','C4','D1','D2'],
+            'C3': ['A1', 'A3', 'C1','C2','C4','D3','D4'],
+            'C4': ['A2', 'A4', 'C1','C2','C3','D3','D4'],
+            'D1': ['B1', 'B3', 'C1','C2','D3','D4','D2'],
+            'D2': ['B2', 'B4', 'C1','C2','D3','D4','D1'],
+            'D3': ['B1', 'B3', 'C3','C4','D1','D2','D4'],
+            'D4': ['B2', 'B4', 'C3','C4','D1','D2','D3']
+        }
+        
+        # Additional data structure for pruning during forward checking
+        self.pruned = {var: [] for var in self.cells}
+
+
+# Creating an instance of the CSP
+if __name__ == "__main__":        
+    csp_instance = CSP()
+    assignment = {
+        'A1': 4,
+        'A2': 4,
+        'A3': 4,
+        'A4': 4,
+    }
+    # Testing the backtracking algorithm with the created CSP instance
+    solution = backtracking(csp_instance,assignment=assignment)
+    print("Solution found by backtracking:", solution)
+    print("Is the solution correct?", check_initial_assignment(solution, csp_instance))
+    # print(csp_instance.domain)
