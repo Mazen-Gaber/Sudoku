@@ -1,9 +1,13 @@
+import random
+
 def backtracking(csp,assignment = {}):
     return backtrack(assignment, csp)
 
 def backtrack(assignment, csp):
     if is_complete(assignment, csp):
         return assignment
+    # if csp.solved():
+    #     return assignment
     
     var = select_unassigned_variable(assignment, csp)
     for value in order_domain_values(var, csp):
@@ -41,7 +45,8 @@ def is_complete(assignment, csp):
 
 def select_unassigned_variable(assignment, csp):
     unassigned_variables = [var for var in csp.cells if var not in assignment]
-    return min(unassigned_variables, key = lambda var: len(csp.domain[var]))
+    mini = min(unassigned_variables, key = lambda var: len(csp.domain[var]))        
+    return mini
 
 def number_of_conflicts(csp, var, value):
     count = 0
@@ -76,6 +81,7 @@ def check_initial_assignment(assignment, csp):
 
 class CSP:
     def __init__(self):
+        self.cells = []
         self.cells = ['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4','D1','D2','D3','D4']  # List of variables
 
         self.domain = {}
@@ -105,18 +111,18 @@ class CSP:
         # Additional data structure for pruning during forward checking
         self.pruned = {var: [] for var in self.cells}
 
+    def solved(self):
+	    return not any(len(self.domain[var])!=1 for var in self.cells)
 
 # Creating an instance of the CSP
 if __name__ == "__main__":        
     csp_instance = CSP()
-    assignment = {
-        'A1': 4,
-        'A2': 4,
-        'A3': 4,
-        'A4': 4,
-    }
-    # Testing the backtracking algorithm with the created CSP instance
+    assignment = {}
+    selected_items = random.sample(csp_instance.cells,5)
+    for item in selected_items:
+        assignment[item] = random.randint(1,9)
+    print(f"random assignment = {assignment}")
+    print("Is soduku solvable correct?", check_initial_assignment(assignment, csp_instance))
     solution = backtracking(csp_instance,assignment=assignment)
     print("Solution found by backtracking:", solution)
-    print("Is the solution correct?", check_initial_assignment(solution, csp_instance))
-    # print(csp_instance.domain)
+
