@@ -18,26 +18,11 @@ font = pygame.font.SysFont("Arial", 25)
 initial_board = [[0 for _ in range(9)] for _ in range(9)]
 
 def draw_game_page (interactive_mode):
+    if interactive_mode == "interactive":
+        interactive_mode = True
 
     bold_underline_font = pygame.font.Font(None, 34)
     bold_underline_font.set_underline(True)
-
-    
-    strategy_label = bold_underline_font.render("Game Mode: ", True, BLACK)
-    screen.blit(strategy_label, (strategy_label_x, strategy_label_y))
-    
-    # Radiobuttons
-    screen.blit(radiobutton_image, (radiobutton_x, radiobutton_y))
-    radiobutton_label1 = font.render("Normal Mode", True, BLACK)
-    radiobutton1_label_x = radiobutton_x + radiobutton_image.get_width() + 5
-    radiobutton1_label_y = radiobutton_y - (radiobutton_label1.get_height() - radiobutton_image.get_height()) // 2
-    screen.blit(radiobutton_label1, (radiobutton1_label_x, radiobutton1_label_y))
-    
-    screen.blit(radiobutton2_image, (radiobutton_x, radiobutton2_y))
-    radiobutton_label2 = font.render("Interactive Mode", True, BLACK)
-    radiobutton2_label_x = radiobutton_x + radiobutton2_image.get_width() + 5
-    radiobutton2_label_y = (radiobutton2_y) - (radiobutton_label2.get_height() - radiobutton2_image.get_height()) // 2
-    screen.blit(radiobutton_label2, (radiobutton2_label_x, radiobutton2_label_y))
     
     # Start game button
     pygame.draw.rect(screen, CRIMSON, start_game_button_rect, border_radius=5)
@@ -54,7 +39,7 @@ def draw_game_page (interactive_mode):
         begin_text = font.render("Solve", True, BLACK)
         begin_text_rect = begin_text.get_rect(center=begin_solving_button_rect.center)
         screen.blit(begin_text, begin_text_rect)
-
+        
         # Hovering
         if begin_solving_button_rect.collidepoint(pygame.mouse.get_pos()):
             pygame.draw.rect(screen, DARK_GRAY, begin_solving_button_rect, border_radius=5, width=3)
@@ -81,12 +66,12 @@ def draw_numbers(grid): # Function to draw numbers on the sudoku board
                 number = font.render(str(grid[i][j]), True, BLACK)
                 screen.blit(number, (grid_x + j * CELL_SIZE + 25, grid_y + i * CELL_SIZE + 20))
 
-def draw_numbers_red(grid, main_board): # Function to draw numbers on the sudoku board
+def draw_numbers2(grid, solution): # Function to draw numbers on the sudoku board
     for i in range(GRID_SIZE):
         for j in range(GRID_SIZE):
             if grid[i][j] != 0:
-                if grid[i][j] == main_board[i][j]:
-                    number = font.render(str(grid[i][j]), True, BLACK)
+                if grid[i][j] == solution[i][j]:
+                    number = font.render(str(grid[i][j]), True, RED)
                 else:
                     number = font.render(str(grid[i][j]), True, BLACK)
                 screen.blit(number, (grid_x + j * CELL_SIZE + 25, grid_y + i * CELL_SIZE + 20))
@@ -132,18 +117,13 @@ def main():
     print(args.mode)
     print(args.speed)
 
-
-
-
-
     start_game = False
     game_over = False
     normal_mode = False
     interactive_mode = False
-    global radiobutton_image, radiobutton2_image
     
     screen.fill(LIGHT_GREY)
-    draw_game_page(interactive_mode)
+    draw_game_page(args.mode)
     
     while not start_game: # Waiting for the user to choose the mode
         for event in pygame.event.get():
@@ -158,34 +138,6 @@ def main():
                 if pygame.mouse.get_pressed()[0]:
                     mouse_x, _ = pygame.mouse.get_pos()
                         
-                    # if radiobutton1 is clicked
-                    if radiobutton_x <= mouse_x < radiobutton_x + radiobutton_image.get_width() and radiobutton_y <= mouse_y < radiobutton_y + radiobutton_image.get_height():
-                        normal_mode = not normal_mode
-                        print("Normal mode: ", normal_mode)
-                        radiobutton_image = radiobutton_checked_image if normal_mode else radiobutton_unchecked_image
-                        
-                        if interactive_mode == True :
-                            interactive_mode = not interactive_mode
-                            print("Interactive mode: ", interactive_mode)
-                            radiobutton2_image = radiobutton_checked_image if interactive_mode else radiobutton_unchecked_image
-                        
-                        pygame.display.update()  
-                        
-                    # if radiobutton2 is clicked
-                    if radiobutton_x <= mouse_x < radiobutton_x + radiobutton2_image.get_width() and radiobutton2_y <= mouse_y < radiobutton2_y + radiobutton2_image.get_height():
-                        interactive_mode = not interactive_mode
-                        print("Interactive mode: ", interactive_mode)
-                        radiobutton2_image = radiobutton_checked_image if interactive_mode else radiobutton_unchecked_image
-                        
-                        pygame.display.update() 
-                        
-                        if  normal_mode == True :
-                            normal_mode = not normal_mode
-                            print("Normal mode: ", normal_mode)
-                            radiobutton_image = radiobutton_checked_image if normal_mode else radiobutton_unchecked_image
-                        
-                        pygame.display.update()
-                        
                     if start_game_button_rect.collidepoint(event.pos):
                         start_game = True
                         
@@ -195,12 +147,13 @@ def main():
         
         # screen.blit(background_image, (0, 0))
         screen.fill(LIGHT_GREY)
-        draw_game_page(interactive_mode)
+        draw_game_page(args.mode)
         pygame.display.flip()
         
-    if normal_mode:
-        board = generate_sudoku_board()
-    elif interactive_mode:
+    if args.mode == "normal":
+        board = generate_sudoku_board(args.difficulty)
+        board = np.array(board).ravel()
+    elif args.mode == "interactive":
         #board = generate_user_board()
         board = [
             2, 0, 9, 0, 0, 0, 6, 0, 0,
@@ -214,11 +167,10 @@ def main():
             0, 8, 0, 3, 0, 1, 4, 5, 0,
         ]
         
-        
-        
     screen.fill(LIGHT_GREY)
-    draw_game_page(interactive_mode)
+    draw_game_page(args.mode)
     pygame.display.flip()
+    time.sleep(1)
     
     while not game_over: # Game starts
         # Implementations here:
@@ -236,29 +188,29 @@ def main():
                 if pygame.mouse.get_pressed()[0]:
                     mouse_x, _ = pygame.mouse.get_pos()
                     
-                        
-                        
         sudoku = SudokuCSP(board)
         solution = sudoku.solve()
+        aux = board.copy()
         
         draw_grid()
         draw_numbers(np.array(board).reshape(9,9))
+        
         if solution is not None:
             board_copy = board.copy()
-            i = 0
             for var, value in zip(sudoku.variables, solution):
                 screen.fill(LIGHT_GREY)
-                draw_game_page(interactive_mode)
+                draw_game_page(args.mode)
                 draw_grid()
                 if board_copy[var] == value:
                     continue
                 board_copy[var] = value
-                draw_numbers_red(np.array(board_copy).reshape(9,9), np.array(board).reshape(9,9))
+                draw_numbers(np.array(board_copy).reshape(9,9))
                 pygame.display.update()
                 pygame.display.flip()
                 time.sleep(1)
+                
             game_over = True
-            visualize_arcs(sudoku.arcs)
+            # visualize_arcs(sudoku.arcs)
         else:
             # display that ac-3 failed 
             # solve using backtracking 

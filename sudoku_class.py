@@ -43,30 +43,7 @@ class SudokuCSP:
         return neighbours
 
     def get_arcs(self):
-        arcs = set()
-        for var in self.variables:
-            row = var // 9
-            col = var % 9
-            box_row = row // 3
-            box_col = col // 3
-
-            # Row arcs
-            for i in range(9):
-                if i != col:
-                    arcs.add((var, row * 9 + i))
-
-            # Column arcs
-            for j in range(9):
-                if j != row:
-                    arcs.add((var, j * 9 + col))
-
-            # 3x3 box arcs
-            for i in range(box_row * 3, box_row * 3 + 3):
-                for j in range(box_col * 3, box_col * 3 + 3):
-                    if i != row and j != col:
-                        arcs.add((var, i * 9 + j))
-                        
-                        
+        arcs = self.constraints.copy()
         sorted_arcs = sorted(arcs, key = lambda arc: (arc[0] // 9, arc[0] % 9, arc[1] // 9, arc[1] % 9))
         for arc in sorted_arcs:
             row1, col1 = arc[0] // 9, arc[0] % 9
@@ -78,7 +55,7 @@ class SudokuCSP:
         return x != y  # Sudoku constraint: numbers should be different
 
     def solve(self):
-        if not ac3(self):
+        if not ac3(self, None):
             return None
 
         solution = [self.domains[var][0] for var in self.variables]

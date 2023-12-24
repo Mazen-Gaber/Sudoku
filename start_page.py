@@ -39,9 +39,9 @@ def game_page():
     pygame.quit()  # Close the Pygame window
     # FOR LINUX USERS (HASSAN) CHANGE python WITH python3
     if sys.platform == "linux":
-        subprocess.call(["python3", "game_page.py"])
+        subprocess.call(["python3", "game_strategy_page.py"])
     else:
-        subprocess.call(["python", "game_page.py"])
+        subprocess.call(["python", "game_strategy_page.py"])
     sys.exit()  # Exit the current Python script
 
 def main():

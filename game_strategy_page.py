@@ -7,6 +7,8 @@ from PIL import ImageTk, Image
 import os
 import sys
 
+import warnings
+warnings.filterwarnings("ignore")
 
 class GameStrategy:
     def __init__(self):
@@ -15,6 +17,7 @@ class GameStrategy:
         self.root.geometry('1200x500')
         self.root.resizable(False, False)
         ctk.set_appearance_mode("Dark")
+        
         self.speed = tk.IntVar(value=5)
         self.mode = tk.StringVar(value="normal")
         self.difficulty = tk.StringVar(value="easy")

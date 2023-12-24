@@ -3,7 +3,7 @@ import random, sys
 from gui_widgets import *
 from game_page import *
 
-def generate_sudoku_board():
+def generate_sudoku_board(difficulty):
     def is_valid(board, row, col, num):
         # Check if the number is not in the current row, column, and 3x3 box
         return (
@@ -29,7 +29,13 @@ def generate_sudoku_board():
     solve(board)
 
     # Remove some numbers to create the puzzle
-    empty_cells = random.randint(40, 55)  # Adjust the range based on difficulty <- mohemaaa do we need to apply difficulities ?
+    if difficulty == "hard": # Adjust the range based on difficulty <- mohemaaa do we need to apply difficulities ?
+        empty_cells = random.randint(30, 40)
+    elif difficulty == "medium":
+        empty_cells = random.randint(40, 50)
+    else:
+        empty_cells = random.randint(50, 60)
+    # empty_cells = random.randint(40, 55)  
     for _ in range(empty_cells):
         row = random.randint(0, 8)
         col = random.randint(0, 8)

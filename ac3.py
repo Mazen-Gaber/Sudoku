@@ -1,7 +1,7 @@
 from collections import deque
 import matplotlib.pyplot as plt
 
-def ac3(csp, queue=None):
+def ac3(csp, queue):
     if queue is None:
         queue = deque(csp.arcs)
 
