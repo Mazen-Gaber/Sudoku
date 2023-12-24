@@ -21,7 +21,7 @@ BACKGROUND_IMAGE_PATH = os.path.join("assets", "game_background.png")
 
 # font = pygame.font.SysFont("Arial", 25)
 
-grid_x = (WIDTH - GRID_SIZE * CELL_SIZE) // 2 + 120 
+grid_x = (WIDTH - GRID_SIZE * CELL_SIZE) // 2 + 160 
 grid_y = (HEIGHT - GRID_SIZE * CELL_SIZE) // 2
 
 strategy_label_x = 50
@@ -39,5 +39,6 @@ radiobutton_unchecked_image = pygame.image.load("assets/radiobutton_unchecked.pn
 radiobutton_image = radiobutton_unchecked_image
 radiobutton2_image = radiobutton_unchecked_image
 
-start_game_button_rect = pygame.Rect(100, radiobutton2_y + 80, 150, 50)
-begin_solving_button_rect = pygame.Rect(100, (radiobutton2_y + 80 + 50) + 80, 150, 50)
+start_game_button_rect = pygame.Rect(65, radiobutton2_y + 80, 250, 50)
+begin_solving_button_rect = pygame.Rect(65, (radiobutton2_y + 80 + 50) + 20, 250, 50)
+clear_board_button_rect = pygame.Rect(65, (radiobutton2_y + 80 + 100 + 20) + 20, 250, 50)
