@@ -43,6 +43,46 @@ def generate_sudoku_board(difficulty):
 
     return board
 
+def generate_user_board(screen): # Interactive board
+    board = [[0 for _ in range(9)] for _ in range(9)]
+    selected_cell = None
+    begin = False
+
+    while not begin:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                selected_cell = get_selected_cell(mouse_x, mouse_y)
+
+                if selected_cell is not None:
+                    board[selected_cell[0]][selected_cell[1]] = (board[selected_cell[0]][selected_cell[1]] + 1) % 10
+                    
+                if clear_board_button_rect.collidepoint(event.pos):
+                    screen.fill(LIGHT_GREY)
+                    draw_game_page("ai")
+                    draw_grid()
+                    board = [[0 for _ in range(9)] for _ in range(9)]
+                    selected_cell = None
+                    pygame.display.update()
+                    
+                # if start_game_button_rect.collidepoint(event.pos):
+                #     begin = True
+                #     print("begin ", begin)
+                    
+                if begin_solving_button_rect.collidepoint(event.pos):
+                    begin = True
+                    print("begin ", begin)
+
+        draw_grid()
+        draw_numbers(board)
+        pygame.display.update()
+        
+    return board
+
 def get_selected_cell(mouse_x, mouse_y):
     if grid_x <= mouse_x < grid_x + GRID_SIZE * CELL_SIZE and grid_y <= mouse_y < grid_y + GRID_SIZE * CELL_SIZE:
         cell_x = int((mouse_x - grid_x) // CELL_SIZE)

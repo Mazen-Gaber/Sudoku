@@ -1,4 +1,6 @@
+
 from ac3 import *
+import copy
 
 class SudokuCSP:
     def __init__(self, puzzle):
@@ -44,11 +46,11 @@ class SudokuCSP:
 
     def get_arcs(self):
         arcs = self.constraints.copy()
-        sorted_arcs = sorted(arcs, key = lambda arc: (arc[0] // 9, arc[0] % 9, arc[1] // 9, arc[1] % 9))
+        sorted_arcs = sorted(arcs, key=lambda arc: (arc[0] // 9, arc[0] % 9, arc[1] // 9, arc[1] % 9))
         for arc in sorted_arcs:
             row1, col1 = arc[0] // 9, arc[0] % 9
             row2, col2 = arc[1] // 9, arc[1] % 9
-            print("(", row1, ",", col1, ")", "-->", "(", row2, ",", col2, ")")
+            # print("(", row1, ",", col1, ")", "-->", "(", row2, ",", col2, ")")
         return arcs
 
     def constraint(self, x, y):
@@ -58,5 +60,45 @@ class SudokuCSP:
         if not ac3(self, None):
             return None
 
-        solution = [self.domains[var][0] for var in self.variables]
-        return solution
+        return self.backtrack()
+
+    def backtrack(self):
+        if self.is_complete():
+            return [self.domains[var][0] for var in self.variables]
+
+        var = self.select_unassigned_variable()
+        for value in self.order_domain_values(var):
+            if self.is_consistent(var, value):
+                self.assign_value(var, value)
+                result = self.backtrack()
+                if result is not None:
+                    return result
+                self.remove_assignment(var)
+
+        return None
+
+    def is_complete(self):
+        for var in self.variables:
+            if len(self.domains[var]) != 1:
+                return False
+        return True
+
+    def select_unassigned_variable(self):
+        for var in self.variables:
+            if len(self.domains[var]) != 1:
+                return var
+
+    def order_domain_values(self, var):
+        return self.domains[var]
+
+    def is_consistent(self, var, value):
+        for neighbour in self.neighbours[var]:
+            if len(self.domains[neighbour]) == 1 and self.domains[neighbour][0] == value:
+                return False
+        return True
+
+    def assign_value(self, var, value):
+        self.domains[var] = [value]
+
+    def remove_assignment(self, var):
+        self.domains[var] = list(range(1, 10)) if self.puzzle[var] == 0 else [self.puzzle[var]]
