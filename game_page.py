@@ -3,11 +3,11 @@ import sys
 from gui_widgets import *
 from gui_utils import *
 from sudoku_utils import *
-from trash.sudoku_solver import *
 from sudoku_class import *
 import numpy as np
 import argparse
 import pyautogui
+import time
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
