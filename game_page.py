@@ -3,7 +3,11 @@ import sys
 from gui_widgets import *
 from gui_utils import *
 from sudoku_utils import *
-from sudoku_solver import *
+from trash.sudoku_solver import *
+from sudoku_class import *
+import numpy as np
+import argparse
+
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -77,6 +81,15 @@ def draw_numbers(grid): # Function to draw numbers on the sudoku board
                 number = font.render(str(grid[i][j]), True, BLACK)
                 screen.blit(number, (grid_x + j * CELL_SIZE + 25, grid_y + i * CELL_SIZE + 20))
 
+def draw_numbers_red(grid, main_board): # Function to draw numbers on the sudoku board
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            if grid[i][j] != 0:
+                if grid[i][j] == main_board[i][j]:
+                    number = font.render(str(grid[i][j]), True, BLACK)
+                else:
+                    number = font.render(str(grid[i][j]), True, BLACK)
+                screen.blit(number, (grid_x + j * CELL_SIZE + 25, grid_y + i * CELL_SIZE + 20))
 
 def generate_user_board(): # Interactive board
     board = [[0 for _ in range(9)] for _ in range(9)]
@@ -107,6 +120,22 @@ def generate_user_board(): # Interactive board
     return board
 
 def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("player")
+    parser.add_argument("difficulty")
+    parser.add_argument("mode")
+    parser.add_argument("speed")
+    args = parser.parse_args()
+    print(args.player)
+    print(args.difficulty)
+    print(args.mode)
+    print(args.speed)
+
+
+
+
+
     start_game = False
     game_over = False
     normal_mode = False
@@ -172,14 +201,20 @@ def main():
     if normal_mode:
         board = generate_sudoku_board()
     elif interactive_mode:
-        board = generate_user_board()
-        solution = solver(board)
-        if solution:
-            print("Puzzle is SOLVABLE!")
-            draw
-        else:
-            print("Puzzle is NOT SOLVABLE!")
-        print(board)
+        #board = generate_user_board()
+        board = [
+            2, 0, 9, 0, 0, 0, 6, 0, 0,
+            0, 4, 0, 8, 7, 0, 0, 1, 2,
+            8, 0, 0, 0, 1, 9, 0, 4, 0,
+            0, 3, 0, 7, 0, 0, 8, 0, 1,
+            0, 6, 5, 0, 0, 8, 0, 3, 0,
+            1, 0, 0, 0, 3, 0, 0, 0, 7,
+            0, 0, 0, 6, 5, 0, 7, 0, 9,
+            6, 0, 4, 0, 0, 0, 0, 2, 0,
+            0, 8, 0, 3, 0, 1, 4, 5, 0,
+        ]
+        
+        
         
     screen.fill(LIGHT_GREY)
     draw_game_page(interactive_mode)
@@ -202,13 +237,37 @@ def main():
                     mouse_x, _ = pygame.mouse.get_pos()
                     
                         
+                        
+        sudoku = SudokuCSP(board)
+        solution = sudoku.solve()
+        
+        draw_grid()
+        draw_numbers(np.array(board).reshape(9,9))
+        if solution is not None:
+            board_copy = board.copy()
+            i = 0
+            for var, value in zip(sudoku.variables, solution):
+                screen.fill(LIGHT_GREY)
+                draw_game_page(interactive_mode)
+                draw_grid()
+                if board_copy[var] == value:
+                    continue
+                board_copy[var] = value
+                draw_numbers_red(np.array(board_copy).reshape(9,9), np.array(board).reshape(9,9))
+                pygame.display.update()
+                pygame.display.flip()
+                time.sleep(1)
+            game_over = True
+            visualize_arcs(sudoku.arcs)
+        else:
+            # display that ac-3 failed 
+            # solve using backtracking 
+            pass
         # background_image = pygame.image.load(BACKGROUND_IMAGE_PATH)
         # background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
         # screen.blit(background_image, (0, 0))
         #screen.fill(LIGHT_GREY)
         #draw_game_page(normal_mode, interactive_mode)
-        draw_grid()
-        draw_numbers(board)
 
         pygame.display.set_caption("Sudoku Solver")
         pygame.display.update()
