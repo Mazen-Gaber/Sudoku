@@ -207,8 +207,8 @@ def main():
                     if solution:
                         # board_copy = board.copy()
                         # sudoku variables
-                        print(board,type(board),board.shape())
-                        print(init_board,type(init_board),init_board.shape())
+                        print(board,type(board))
+                        print(init_board,type(init_board))
 
                         # board awalaneya 1d np array : init_board 81
                         # board gedeeda 1d np array : board 81
