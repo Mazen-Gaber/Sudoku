@@ -156,6 +156,7 @@ def main():
                     if begin_solving_button_rect.collidepoint(event.pos):
                         start_game = True
     
+    pygame.display.flip()
     sudoku = SudokuCSP(board)
     aux_board = np.array(board).reshape(9,9)
     if args.player == "user":
@@ -211,9 +212,11 @@ def main():
                         game_over = True
                         # visualize_arcs(sudoku.arcs)
                     else:
-                        # display that ac-3 failed 
-                        # solve using backtracking 
-                        pass
+                        # no solution
+                        print("puzzle is unsolvable")
+                        unsolvable_text = font.render("Puzzle is unsolvable!", True, RED)
+                        screen.blit(unsolvable_text, (50, 200))
+                        game_over = True
         pygame.display.set_caption("Sudoku")
         pygame.display.update()
         pygame.display.flip()

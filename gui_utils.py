@@ -2,6 +2,8 @@ import pygame
 import random, sys
 from gui_widgets import *
 from game_page import *
+from sudoku_class import *
+import numpy as np
 
 def generate_sudoku_board(difficulty):
     def is_valid(board, row, col, num):
@@ -11,7 +13,7 @@ def generate_sudoku_board(difficulty):
             all(board[r][col] != num for r in range(9)) and
             all(board[r][c] != num for r in range(row - row % 3, row - row % 3 + 3) for c in range(col - col % 3, col - col % 3 + 3))
         )
-
+        
     def solve(board):
         for row in range(9):
             for col in range(9):
@@ -24,7 +26,6 @@ def generate_sudoku_board(difficulty):
                             board[row][col] = 0  # Backtrack if the current configuration is not valid
                     return False  # No valid number found for this position
         return True  # All positions filled
-
     board = [[0 for _ in range(9)] for _ in range(9)]
     solve(board)
 
@@ -35,12 +36,13 @@ def generate_sudoku_board(difficulty):
         empty_cells = random.randint(40, 50)
     else:
         empty_cells = random.randint(50, 60)
+        
     # empty_cells = random.randint(40, 55)  
+    
     for _ in range(empty_cells):
         row = random.randint(0, 8)
         col = random.randint(0, 8)
         board[row][col] = 0
-
     return board
 
 def generate_user_board(screen): # Interactive board
@@ -63,20 +65,18 @@ def generate_user_board(screen): # Interactive board
                     
                 if clear_board_button_rect.collidepoint(event.pos):
                     screen.fill(LIGHT_GREY)
-                    draw_game_page("ai")
+                    draw_game_page("ai", "interactive")
                     draw_grid()
                     board = [[0 for _ in range(9)] for _ in range(9)]
                     selected_cell = None
                     pygame.display.update()
                     
-                # if start_game_button_rect.collidepoint(event.pos):
-                #     begin = True
-                #     print("begin ", begin)
-                    
-                if begin_solving_button_rect.collidepoint(event.pos):
+                if start_game_button_rect.collidepoint(event.pos):
                     begin = True
                     print("begin ", begin)
-
+                    
+                        
+                        
         draw_grid()
         draw_numbers(board)
         pygame.display.update()
