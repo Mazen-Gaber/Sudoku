@@ -1,4 +1,4 @@
-from ac3 import *
+from AC3 import *
 from random import choice
 from collections import defaultdict
 from SudokuCSP import SudokuCSP
@@ -73,11 +73,9 @@ class AC3MRVLCVSudokuSolver():
 
         # Enforce AC3 on initial assignments
         if not AC3(csp, makeArcQue(csp, assigned)):
-            print("AC-3 is not sufficient to solve the problem")
             return False
         # If there's still uncertain choices
         
-        print("Trying with backtracking")
         uncertain = []
         for i in range(9):
             for j in range(9):
@@ -114,7 +112,11 @@ class AC3MRVLCVSudokuSolver():
         domainlist = list(csp.domains[X])
         domainlist.sort(key=lambda x: self.count_conflict(csp, X, x))
 
+        print("----------")
+        print(f"\nfor Node: {X}")
+
         for x in domainlist:
+            print(f"and assignment: {x}")
             # first iter x is the LCV -> 0 : 8
             domainX = csp.domains[X]
             csp.domains[X] = set([x])
