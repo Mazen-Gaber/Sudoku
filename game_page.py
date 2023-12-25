@@ -135,6 +135,8 @@ def main():
     pygame.display.flip()
     
     while not start_game: # Waiting for the user to start the game
+        if args.mode == "interactive":
+            break
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -198,7 +200,15 @@ def main():
                     aux_board = init_board.copy()
                     
                     board = board.reshape(9,9).tolist()
+                    
+                    start_time = time.time()
                     solution = solver.solveSudoku(board)
+                    end_time = time.time()
+                    print("Time taken: " + str(end_time - start_time) * 100)
+                    time_text = font.render("Time taken: " + str(end_time - start_time) + " ms", True, DARK_GRAY)
+                    screen.blit(time_text, (50, 250))
+                    pygame.display.update()
+                    
                     board = np.array(board).ravel()
                     # raga3 el board min hina 1d array of ints
                     draw_grid()
@@ -209,7 +219,9 @@ def main():
                         # board_copy = board.copy()
                         # sudoku variables
                         unsolvable1_text = font.render("Puzzle is solvable", True, RED)
-                        screen.blit(unsolvable1_text, (50, 200))
+                        screen.blit(unsolvable1_text, (50, 180))
+                        pygame.display.update()
+                        
                         print(board,type(board))
                         print(init_board,type(init_board))
 
@@ -219,6 +231,12 @@ def main():
                         for i in range(81):
                             screen.fill(LIGHT_GREY)
                             draw_game_page(args.player, args.mode)
+                            unsolvable1_text = font.render("Puzzle is solvable", True, RED)
+                            screen.blit(unsolvable1_text, (50, 180))
+                            pygame.display.update()
+                            time_text = font.render("Time taken: {:.3f} ms".format((end_time - start_time) * 1000), True, DARK_GRAY)
+                            screen.blit(time_text, (50, 250))
+                            pygame.display.update()
                             draw_grid()
                             # draw_numbers(np.array(aux_board).reshape(9,9))
                             draw_numbers_with_colors(np.array(init_board).reshape(9,9), np.array(aux_board).reshape(9,9))
@@ -237,7 +255,7 @@ def main():
                         # no solution
                         print("puzzle is unsolvable")
                         unsolvable_text = font.render("Puzzle is unsolvable!", True, RED)
-                        screen.blit(unsolvable_text, (50, 200))
+                        screen.blit(unsolvable_text, (50, 150))
                         game_over = True
                         
         pygame.display.set_caption("Sudoku")

@@ -31,12 +31,12 @@ def generate_sudoku_board(difficulty):
     solve(board)
 
     # Remove some numbers to create the puzzle
-    if difficulty == "hard": # Adjust the range based on difficulty <- mohemaaa do we need to apply difficulities ?
-        empty_cells = random.randint(30, 40)
+    if difficulty == "easy": # Adjust the range based on difficulty <- mohemaaa do we need to apply difficulities ?
+        empty_cells = random.randint(40, 45)
     elif difficulty == "medium":
-        empty_cells = random.randint(40, 50)
-    else:
-        empty_cells = random.randint(50, 60)
+        empty_cells = random.randint(46, 55)
+    elif difficulty == "hard":
+        empty_cells = random.randint(56, 70)
         
     # empty_cells = random.randint(40, 55)  
     
@@ -72,7 +72,7 @@ def generate_user_board(screen): # Interactive board
                     selected_cell = None
                     pygame.display.update()
                     
-                if start_game_button_rect.collidepoint(event.pos):
+                if begin_solving_button_rect.collidepoint(event.pos):
                     begin = True
                     print("begin ", begin)
                     

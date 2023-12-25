@@ -55,11 +55,11 @@ class GameStrategy:
         self.player_label = CTkLabel(self.radio_frame2, text="DIFFICULTY", font=("Arial Black", 16))
         self.player_label.pack()
         
-        self.easy_game = CTkRadioButton(self.radio_frame2, value="Easy", text="Easy", font=("Arial Black", 16), fg_color=("#3A7EBF","#D53D44"), variable=self.difficulty)
+        self.easy_game = CTkRadioButton(self.radio_frame2, value="easy", text="Easy", font=("Arial Black", 16), fg_color=("#3A7EBF","#D53D44"), variable=self.difficulty)
         self.easy_game.pack(anchor='e' ,padx=80, pady=2)
-        self.medium_game = CTkRadioButton(self.radio_frame2, value="Medium", text="Medium", font=("Arial Black", 16), fg_color=("#3A7EBF","#D53D44"), variable=self.difficulty)
+        self.medium_game = CTkRadioButton(self.radio_frame2, value="medium", text="Medium", font=("Arial Black", 16), fg_color=("#3A7EBF","#D53D44"), variable=self.difficulty)
         self.medium_game.pack(anchor='e',padx=80, pady=5)
-        self.hard_game = CTkRadioButton(self.radio_frame2, value="Hard", text="Hard", font=("Arial Black", 16), fg_color=("#3A7EBF","#D53D44"), variable=self.difficulty)
+        self.hard_game = CTkRadioButton(self.radio_frame2, value="hard", text="Hard", font=("Arial Black", 16), fg_color=("#3A7EBF","#D53D44"), variable=self.difficulty)
         self.hard_game.pack(anchor='e',padx=80, pady=5)
         
         self.radio_frame3 = CTkFrame(self.puzzle_frame, width=90)
