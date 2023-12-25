@@ -35,7 +35,6 @@ def draw_game_page (player, mode):
         if start_game_button_rect.collidepoint(pygame.mouse.get_pos()):
             pygame.draw.rect(screen, DARK_GRAY, start_game_button_rect, border_radius=5, width=3)
         
-    # if player == "ai": # Show a begin button in interactive mode
     pygame.draw.rect(screen, CRIMSON, begin_solving_button_rect, border_radius=5)
     begin_text = font.render("SOLVE PUZZLE", True, BLACK)
     begin_text_rect = begin_text.get_rect(center=begin_solving_button_rect.center)
@@ -45,14 +44,15 @@ def draw_game_page (player, mode):
     if begin_solving_button_rect.collidepoint(pygame.mouse.get_pos()):
         pygame.draw.rect(screen, DARK_GRAY, begin_solving_button_rect, border_radius=5, width=3)
         
-    pygame.draw.rect(screen, CRIMSON, clear_board_button_rect, border_radius=5)
-    clear_text = font.render("CLEAR PUZZLE", True, BLACK)
-    clear_text_rect = begin_text.get_rect(center=clear_board_button_rect.center)
-    screen.blit(clear_text, clear_text_rect)
+    if mode == "interactive":
+        pygame.draw.rect(screen, CRIMSON, clear_board_button_rect, border_radius=5)
+        clear_text = font.render("CLEAR PUZZLE", True, BLACK)
+        clear_text_rect = begin_text.get_rect(center=clear_board_button_rect.center)
+        screen.blit(clear_text, clear_text_rect)
     
-    # Hovering
-    if clear_board_button_rect.collidepoint(pygame.mouse.get_pos()):
-        pygame.draw.rect(screen, DARK_GRAY, clear_board_button_rect, border_radius=5, width=3)
+        # Hovering
+        if clear_board_button_rect.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(screen, DARK_GRAY, clear_board_button_rect, border_radius=5, width=3)
     
     draw_grid()
     pygame.display.update()
@@ -121,7 +121,7 @@ def main():
         # list
         board = generate_sudoku_board(args.difficulty)
         board = np.array(board).ravel()
-     
+    
     elif args.mode == "interactive":
         # list
         board = generate_user_board(screen)
@@ -195,7 +195,8 @@ def main():
                 # el modees
                 if args.player == "ai" :
                     init_board = board.copy()
-
+                    aux_board = init_board.copy()
+                    
                     board = board.reshape(9,9).tolist()
                     solution = solver.solveSudoku(board)
                     board = np.array(board).ravel()
@@ -207,24 +208,28 @@ def main():
                     if solution:
                         # board_copy = board.copy()
                         # sudoku variables
+                        unsolvable1_text = font.render("Puzzle is solvable", True, RED)
+                        screen.blit(unsolvable1_text, (50, 200))
                         print(board,type(board))
                         print(init_board,type(init_board))
 
                         # board awalaneya 1d np array : init_board 81
                         # board gedeeda 1d np array : board 81
 
-
-                        # for var, value in zip(sudoku.variables, board):
-                        #     screen.fill(LIGHT_GREY)
-                        #     draw_game_page(args.player, args.mode)
-                        #     draw_grid()
-                        #     if init_board[var] == baord[i][j]:
-                        #         continue
-                        #     init_board[var] = value
-                        #     draw_numbers(np.array(init_board).reshape(9,9))
-                        #     pygame.display.update()
-                        #     pygame.display.flip()
-                        #     time.sleep(int(args.speed)/10)
+                        for i in range(81):
+                            screen.fill(LIGHT_GREY)
+                            draw_game_page(args.player, args.mode)
+                            draw_grid()
+                            # draw_numbers(np.array(aux_board).reshape(9,9))
+                            draw_numbers_with_colors(np.array(init_board).reshape(9,9), np.array(aux_board).reshape(9,9))
+                            if board[i] == init_board[i]:
+                                continue
+                            aux_board[i] = board[i]
+                            draw_number_with_color(aux_board[i], i // 9, i % 9, VIOLET)
+                            # draw_numbers_with_colors(np.array(aux_board).reshape(9,9), np.array(board).reshape(9,9))
+                            pygame.display.update()
+                            pygame.display.flip()
+                            time.sleep(int(args.speed)/10)
                             
                         game_over = True
                         # visualize_arcs(sudoku.arcs)
@@ -234,6 +239,7 @@ def main():
                         unsolvable_text = font.render("Puzzle is unsolvable!", True, RED)
                         screen.blit(unsolvable_text, (50, 200))
                         game_over = True
+                        
         pygame.display.set_caption("Sudoku")
         pygame.display.update()
         pygame.display.flip()

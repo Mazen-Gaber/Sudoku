@@ -27,6 +27,7 @@ def generate_sudoku_board(difficulty):
                     return False  # No valid number found for this position
         return True  # All positions filled
     board = [[0 for _ in range(9)] for _ in range(9)]
+    board[0][0] = random.randint(1,9)
     solve(board)
 
     # Remove some numbers to create the puzzle

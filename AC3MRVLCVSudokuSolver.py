@@ -1,4 +1,4 @@
-from AC3 import *
+from ac3 import *
 from random import choice
 from collections import defaultdict
 from SudokuCSP import SudokuCSP
@@ -73,8 +73,11 @@ class AC3MRVLCVSudokuSolver():
 
         # Enforce AC3 on initial assignments
         if not AC3(csp, makeArcQue(csp, assigned)):
+            print("AC-3 is not sufficient to solve the problem")
             return False
         # If there's still uncertain choices
+        
+        print("Trying with backtracking")
         uncertain = []
         for i in range(9):
             for j in range(9):

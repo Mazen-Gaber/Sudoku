@@ -18,7 +18,7 @@ class GameStrategy:
         self.root.resizable(False, False)
         ctk.set_appearance_mode("Dark")
         
-        self.speed = tk.IntVar(value=5)
+        self.speed = tk.IntVar(value = 10)
         self.mode = tk.StringVar(value="normal")
         self.difficulty = tk.StringVar(value="easy")
         self.player = tk.StringVar(value="ai")
@@ -32,11 +32,11 @@ class GameStrategy:
         self.puzzle_frame = CTkFrame(self.root, width=500)
         self.puzzle_frame.pack(side = 'left', padx = [500,80])
         
-        self.speed_label = CTkLabel(self.puzzle_frame, text="Speed", font=("Arial Black", 16))
-        self.speed_label.pack()
+        self.speed_label = CTkLabel(self.puzzle_frame, text="SPEED", font=("Arial Black", 16))
+        self.speed_label.pack(pady = [10 , 5])
 
-        self.speed_slider2 = CTkSlider(self.puzzle_frame, from_=1, to=10, number_of_steps=10, orientation='horizontal', button_color=("#1B558D","#D53D44"), variable=self.speed)
-        self.speed_slider2.pack()
+        self.speed_slider2 = CTkSlider(self.puzzle_frame, from_=1, to=15, number_of_steps=15, orientation='horizontal', button_color=("#1B558D","#D53D44"), variable=self.speed)
+        self.speed_slider2.pack(pady = [0 , 10])
         
         self.radio_frame = CTkFrame(self.puzzle_frame, width=90)
         self.radio_frame.pack(pady = [10,5], padx = 70)
