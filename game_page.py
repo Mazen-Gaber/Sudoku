@@ -190,6 +190,17 @@ def main():
                         draw_game_page(args.player, args.mode)
                         draw_grid()
                         draw_numbers_with_colors(board, aux_board)
+                        aux_board_copy = aux_board.reshape(9,9).tolist()
+                        solution = solver.solveSudoku(aux_board_copy)
+                        if solution:
+                            unsolvable1_text = font.render("Solvable Puzzle", True, VIOLET)
+                            screen.blit(unsolvable1_text, (60, 180))
+                            pygame.display.update()
+                        else:
+                            unsolvable1_text = font.render("Unsolvable Puzzle", True, RED)
+                            screen.blit(unsolvable1_text, (60, 180))
+                            pygame.display.update()
+                        
         
                 # draw_grid()
                 # draw_numbers(np.array(aux_board).reshape(9,9))
