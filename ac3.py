@@ -29,6 +29,7 @@ def remove_inconsistent_values(csp, Xt, Xh, removals):
             if not csp.conflicts(*Xt, x, *Xh, y):
                 break
             else:
+                print(f"{x} was removed from {Xt} because of a clash with {Xh} ")
                 csp.domains[Xt].remove(x)
                 removals[Xt].add(x)
                 revised = True

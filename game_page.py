@@ -204,7 +204,7 @@ def main():
                     start_time = time.time()
                     solution = solver.solveSudoku(board)
                     end_time = time.time()
-                    print("Time taken: " + str(end_time - start_time) * 100)
+                    #print("Time taken: " + str(end_time - start_time) * 100)
                     time_text = font.render("Time taken: " + str(end_time - start_time) + " ms", True, DARK_GRAY)
                     screen.blit(time_text, (50, 250))
                     pygame.display.update()
@@ -222,8 +222,6 @@ def main():
                         screen.blit(unsolvable1_text, (50, 180))
                         pygame.display.update()
                         
-                        print(board,type(board))
-                        print(init_board,type(init_board))
 
                         # board awalaneya 1d np array : init_board 81
                         # board gedeeda 1d np array : board 81
