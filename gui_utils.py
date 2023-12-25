@@ -89,3 +89,35 @@ def get_selected_cell(mouse_x, mouse_y):
         cell_y = int((mouse_y - grid_y) // CELL_SIZE)
         return cell_y, cell_x
     return None
+
+def is_valid(board, row, col):
+    number = board[row][col]
+    for i in range(9):
+        if i != col and board[row][i] == number:
+            return False
+    for i in range(9):
+        if i != row and board[i][col] == number:
+            return False
+    box_row = (row // 3) * 3
+    box_col = (col // 3) * 3
+    for i in range(3):
+        for j in range(3):
+            if (box_row + i != row or box_col + j != col) and board[box_row + i][box_col + j] == number:
+                return False
+    return True
+
+# override !
+# def is_valid(board, row, col, number, selected_cell):
+#     for i in range(9):
+#         if board[row][i] == number and i != col:
+#             return False
+#     for i in range(9):
+#         if board[i][col] == number and i != row:
+#             return False
+#     box_row = (row // 3) * 3
+#     box_col = (col // 3) * 3
+#     for i in range(3):
+#         for j in range(3):
+#             if board[box_row + i][box_col + j] == number and (box_row + i, box_col + j) != selected_cell:
+#                 return False
+#     return True

@@ -17,16 +17,16 @@ font_board = pygame.font.SysFont("Arial", 25)
 
 initial_board = [[0 for _ in range(9)] for _ in range(9)]
 
-def draw_game_page (player):
+def draw_game_page (player, mode):
 
     screen.fill(LIGHT_GREY)
     bold_underline_font = pygame.font.Font(None, 34)
     bold_underline_font.set_underline(True)
     
     # Start game button
-    if player == "ai":
+    if mode == "normal":
         pygame.draw.rect(screen, CRIMSON, start_game_button_rect, border_radius=5)
-        start_text = font.render("GENERATE RANDOM", True, BLACK)
+        start_text = font.render("RANDOMIZE", True, BLACK)
         start_text_rect = start_text.get_rect(center=start_game_button_rect.center)
         screen.blit(start_text, start_text_rect)
 
@@ -75,7 +75,27 @@ def draw_numbers(grid): # Function to draw numbers on the sudoku board
             if grid[i][j] != 0:
                 number = font_board.render(str(grid[i][j]), True, BLACK)
                 screen.blit(number, (grid_x + j * CELL_SIZE + 25, grid_y + i * CELL_SIZE + 20))
-
+                
+                
+def draw_number_with_color(number, row, col, color):
+    if number != 0:
+        number_text = font_board.render(str(number), True, color)
+        number_rect = number_text.get_rect()
+        number_rect.center = (grid_x + col * CELL_SIZE + CELL_SIZE // 2, grid_y + row * CELL_SIZE + CELL_SIZE // 2)
+        screen.blit(number_text, number_rect)
+        
+def draw_numbers_with_colors(board, aux_board):
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            if board[i][j] == 0 and aux_board [i][j] == 0:
+                continue
+            if board[i][j] != 0 and board[i][j] == aux_board [i][j]:
+                draw_number_with_color(aux_board[i][j], i, j, BLACK)
+            elif board[i][j] == 0:
+                if is_valid(aux_board, i, j):
+                    draw_number_with_color(aux_board[i][j], i, j, VIOLET)
+                else:
+                    draw_number_with_color(aux_board[i][j], i, j, RED)
 
 def main():
 
@@ -94,7 +114,7 @@ def main():
     game_over = False
     
     screen.fill(LIGHT_GREY)
-    draw_game_page(args.player)
+    draw_game_page(args.player, args.mode)
     
     if args.mode == "normal":
         board = generate_sudoku_board(args.difficulty)
@@ -106,7 +126,7 @@ def main():
         print("board = ", board)
         
     screen.fill(LIGHT_GREY)
-    draw_game_page(args.player)
+    draw_game_page(args.player, args.mode)
     draw_grid()
     draw_numbers(np.array(board).reshape(9,9))
     pygame.display.flip()
@@ -124,25 +144,23 @@ def main():
                 if pygame.mouse.get_pressed()[0]:
                     mouse_x, _ = pygame.mouse.get_pos()
                         
+                    if start_game_button_rect.collidepoint(event.pos):
+                        board = generate_sudoku_board(args.difficulty)
+                        board = np.array(board).ravel()
+                        screen.fill(LIGHT_GREY)
+                        draw_game_page(args.player, args.mode)
+                        draw_grid()
+                        draw_numbers(np.array(board).reshape(9,9))
+                        pygame.display.flip()
+                        
                     if begin_solving_button_rect.collidepoint(event.pos):
                         start_game = True
-        
-        
-        # screen.fill(LIGHT_GREY)
-        # draw_game_page(args.mode)
-        # pygame.display.flip()
-        
-        
-    # screen.fill(LIGHT_GREY)
-    # draw_game_page(args.mode)
-    # draw_grid()
-    # draw_numbers(np.array(board).reshape(9,9))
-    # pygame.display.flip()
-    # time.sleep(2)
     
     sudoku = SudokuCSP(board)
     aux_board = np.array(board).reshape(9,9)
-    
+    if args.player == "user":
+        board = np.array(board).reshape(9,9)
+        
     while not game_over: # Game starts
         # Implementations here:
         # 1. Call AI algorithm to solve the board
@@ -157,46 +175,45 @@ def main():
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if pygame.mouse.get_pressed()[0]:
-                    mouse_x, _ = pygame.mouse.get_pos()
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    selected_cell = get_selected_cell(mouse_x, mouse_y)
                     
-                if args.player == "user":
-                    pass
-                    # board = np.array(board).reshape(9,9)
-                    # mouse_x, mouse_y = pygame.mouse.get_pos()
-                    # selected_cell = get_selected_cell(mouse_x, mouse_y)
-                    
-                    # if selected_cell is not None and board[selected_cell[0]][selected_cell[1]] == 0:
-                    #     aux_board[selected_cell[0]][selected_cell[1]] = (aux_board[selected_cell[0]][selected_cell[1]] + 1) % 10
-                        
-        draw_grid()
-        draw_numbers(np.array(aux_board).reshape(9,9))
-        pygame.display.update()
+                    if args.player == "user" and selected_cell is not None and board[selected_cell[0]][selected_cell[1]] == 0:
+                        aux_board[selected_cell[0]][selected_cell[1]] = (aux_board[selected_cell[0]][selected_cell[1]] + 1) % 10
+                        number = aux_board[selected_cell[0]][selected_cell[1]]
+                        screen.fill(LIGHT_GREY)
+                        draw_game_page(args.player, args.mode)
+                        draw_grid()
+                        draw_numbers_with_colors(board, aux_board)
         
-        if args.player == "ai" :
-            solution = sudoku.solve()
-            draw_grid()
-            draw_numbers(np.array(board).reshape(9,9))
-        
-            if solution is not None:
-                board_copy = board.copy()
-                for var, value in zip(sudoku.variables, solution):
-                    screen.fill(LIGHT_GREY)
-                    draw_game_page(args.player)
+                # draw_grid()
+                # draw_numbers(np.array(aux_board).reshape(9,9))
+                pygame.display.update()
+                if args.player == "ai" :
+                    solution = sudoku.solve()
                     draw_grid()
-                    if board_copy[var] == value:
-                        continue
-                    board_copy[var] = value
-                    draw_numbers(np.array(board_copy).reshape(9,9))
-                    pygame.display.update()
-                    pygame.display.flip()
-                    time.sleep(1)
-                    
-                game_over = True
-                # visualize_arcs(sudoku.arcs)
-            else:
-                # display that ac-3 failed 
-                # solve using backtracking 
-                pass
+                    draw_numbers(np.array(board).reshape(9,9))
+                
+                    if solution is not None:
+                        board_copy = board.copy()
+                        for var, value in zip(sudoku.variables, solution):
+                            screen.fill(LIGHT_GREY)
+                            draw_game_page(args.player, args.mode)
+                            draw_grid()
+                            if board_copy[var] == value:
+                                continue
+                            board_copy[var] = value
+                            draw_numbers(np.array(board_copy).reshape(9,9))
+                            pygame.display.update()
+                            pygame.display.flip()
+                            time.sleep(int(args.speed)/10)
+                            
+                        game_over = True
+                        # visualize_arcs(sudoku.arcs)
+                    else:
+                        # display that ac-3 failed 
+                        # solve using backtracking 
+                        pass
         pygame.display.set_caption("Sudoku")
         pygame.display.update()
         pygame.display.flip()
