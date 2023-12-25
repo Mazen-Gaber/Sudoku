@@ -1,40 +1,38 @@
-from collections import deque
-import matplotlib.pyplot as plt
+# Remeber: Delete from the TAIL!
+from collections import defaultdict
 
-def ac3(csp, queue):
-    if queue is None:
-        queue = deque(csp.arcs)
-
+def AC3(csp,queue,removals=defaultdict(set)):
+    # queue is for constraints
+    # law el constraints khelset abl ma el domains te5las yeb2a keda i satisfied them
+    # law el domains 5elset el awal raga3 false we backtrack
     while queue:
-        (xi, xj) = queue.popleft()
-        if revise(csp, xi, xj):
-            if not csp.domains[xi]:
+        # Xt --> Xh Delete from domain of Xt
+        (Xt, Xh) = queue.pop()
+        if remove_inconsistent_values(csp, Xt, Xh, removals):
+            if (Xt == (0,0)):
+                print(csp.domains[Xt])
+            if not csp.domains[Xt]:
                 return False
-            for xk in csp.neighbours[xi]:
-                if xk != xj:
-                    queue.append((xk, xi))
+            elif len(csp.domains[Xt]) > 1:
+                continue
+            for X in csp.adjList[Xt]:
+                if X != Xt:
+                    queue.append((X, Xt))
     return True
 
-def revise(csp, xi, xj):
+def remove_inconsistent_values(csp, Xt, Xh, removals):
+    # Return True if we remove a value
     revised = False
-    for x in csp.domains[xi][:]:
-        if not any(csp.constraint(x, y) for y in csp.domains[xj]):
-            csp.domains[xi].remove(x)
-            revised = True
+    # If Xt=x conflicts with Xh=y for every possible y, eliminate Xt=x
+    for x in csp.domains[Xt].copy():
+        for y in csp.domains[Xh]:
+            if not csp.conflicts(*Xt, x, *Xh, y):
+                break
+            else:
+                csp.domains[Xt].remove(x)
+                removals[Xt].add(x)
+                revised = True
     return revised
 
-def visualize_arcs(arcs):
-    fig, ax = plt.subplots()
-
-    for arc in arcs:
-        row1, col1 = arc[0] // 9, arc[0] % 9
-        row2, col2 = arc[1] // 9, arc[1] % 9
-        ax.plot([col1 + 0.5, col2 + 0.5], [8.5 - row1, 8.5 - row2], color='red')
-
-    ax.set_xlim(0, 9)
-    ax.set_ylim(0, 9)
-    ax.set_xticks(range(10))
-    ax.set_yticks(range(10))
-    ax.grid(True)
-    ax.set_aspect('equal')
-    plt.show()
+def makeArcQue(csp, Xs):
+    return [(Xt, Xh) for Xh in Xs for Xt in csp.adjList[Xh]]

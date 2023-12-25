@@ -2,7 +2,7 @@ import pygame
 import random, sys
 from gui_widgets import *
 from game_page import *
-from sudoku_class import *
+#from sudoku_class import *
 import numpy as np
 
 def generate_sudoku_board(difficulty):
@@ -105,19 +105,3 @@ def is_valid(board, row, col):
             if (box_row + i != row or box_col + j != col) and board[box_row + i][box_col + j] == number:
                 return False
     return True
-
-# override !
-# def is_valid(board, row, col, number, selected_cell):
-#     for i in range(9):
-#         if board[row][i] == number and i != col:
-#             return False
-#     for i in range(9):
-#         if board[i][col] == number and i != row:
-#             return False
-#     box_row = (row // 3) * 3
-#     box_col = (col // 3) * 3
-#     for i in range(3):
-#         for j in range(3):
-#             if board[box_row + i][box_col + j] == number and (box_row + i, box_col + j) != selected_cell:
-#                 return False
-#     return True

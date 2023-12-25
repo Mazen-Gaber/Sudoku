@@ -3,14 +3,15 @@ import sys
 from gui_widgets import *
 from gui_utils import *
 from sudoku_utils import *
-from sudoku_class import *
+#from sudoku_class import *
 import numpy as np
 import argparse
 import time
+from AC3MRVLCVSudokuSolver import AC3MRVLCVSudokuSolver
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
+solver = AC3MRVLCVSudokuSolver()
 pygame.display.set_caption("Sudoku Solver")
 font = pygame.font.SysFont("Arial Black", 25)
 font_board = pygame.font.SysFont("Arial", 25)
@@ -117,10 +118,12 @@ def main():
     draw_game_page(args.player, args.mode)
     
     if args.mode == "normal":
+        # list
         board = generate_sudoku_board(args.difficulty)
         board = np.array(board).ravel()
-        
+     
     elif args.mode == "interactive":
+        # list
         board = generate_user_board(screen)
         board = np.array(board).ravel()
         print("board = ", board)
@@ -157,7 +160,6 @@ def main():
                         start_game = True
     
     pygame.display.flip()
-    sudoku = SudokuCSP(board)
     aux_board = np.array(board).reshape(9,9)
     if args.player == "user":
         board = np.array(board).reshape(9,9)
@@ -190,24 +192,39 @@ def main():
                 # draw_grid()
                 # draw_numbers(np.array(aux_board).reshape(9,9))
                 pygame.display.update()
+                # el modees
                 if args.player == "ai" :
-                    solution = sudoku.solve()
+                    init_board = board.copy()
+
+                    board = board.reshape(9,9).tolist()
+                    solution = solver.solveSudoku(board)
+                    board = np.array(board).ravel()
+                    # raga3 el board min hina 1d array of ints
                     draw_grid()
-                    draw_numbers(np.array(board).reshape(9,9))
-                
-                    if solution is not None:
-                        board_copy = board.copy()
-                        for var, value in zip(sudoku.variables, solution):
-                            screen.fill(LIGHT_GREY)
-                            draw_game_page(args.player, args.mode)
-                            draw_grid()
-                            if board_copy[var] == value:
-                                continue
-                            board_copy[var] = value
-                            draw_numbers(np.array(board_copy).reshape(9,9))
-                            pygame.display.update()
-                            pygame.display.flip()
-                            time.sleep(int(args.speed)/10)
+                    draw_numbers(np.array(init_board).reshape(9,9))
+                    # sudoku variables 
+                    # boar
+                    if solution:
+                        # board_copy = board.copy()
+                        # sudoku variables
+                        print(board,type(board),board.shape())
+                        print(init_board,type(init_board),init_board.shape())
+
+                        # board awalaneya 1d np array : init_board 81
+                        # board gedeeda 1d np array : board 81
+
+
+                        # for var, value in zip(sudoku.variables, board):
+                        #     screen.fill(LIGHT_GREY)
+                        #     draw_game_page(args.player, args.mode)
+                        #     draw_grid()
+                        #     if init_board[var] == baord[i][j]:
+                        #         continue
+                        #     init_board[var] = value
+                        #     draw_numbers(np.array(init_board).reshape(9,9))
+                        #     pygame.display.update()
+                        #     pygame.display.flip()
+                        #     time.sleep(int(args.speed)/10)
                             
                         game_over = True
                         # visualize_arcs(sudoku.arcs)
