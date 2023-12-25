@@ -1,4 +1,4 @@
-from AC3 import *
+from ac3 import *
 from random import choice
 from collections import defaultdict
 from SudokuCSP import SudokuCSP
